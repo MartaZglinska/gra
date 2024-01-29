@@ -1,6 +1,8 @@
+import tkinter as tk
+import random
 
-
-
+# lista słów do zgadywania
+word_list = []
 
 # definiowanie tablicy grafik
 hangman_art = ['''
