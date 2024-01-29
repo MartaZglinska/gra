@@ -39,3 +39,54 @@ hangman_art = ['''
   /|\  |
   / \  |
       ===''']
+
+with open('passwords.txt') as file:
+    file_content = file.read()
+    word_list = file_content.split()
+
+
+# funkcja do zwracania losowego słowa z puli
+def choose_word():
+    return random.choice(word_list)
+
+
+# funkcja do aktualizowania obrazku wisielca
+def update_hangman(mistakes):
+    hangman_label.config(text=hangman_art[mistakes])
+
+
+# funkcja do sprawdzania czy podana litera zawiera się w wylosowanym słowie
+def check_guessed_letter(guess):
+    global word_with_blanks
+    guess_entry.delete(0, tk.END)
+    if guess in word:
+        for i in range(len(word)):
+            if word[i] == guess:
+                word_with_blanks = word_with_blanks[:i] + guess + word_with_blanks[i+1:]
+        word_label.config(text=word_with_blanks)
+        if '_' not in word_with_blanks:
+            end_game("win")
+    else:
+        global mistakes
+        mistakes += 1
+        update_hangman(mistakes)
+        if mistakes == 6:
+            end_game("lose")
+
+
+# funckja do zakończenia gry
+def end_game(result):
+    if result == 'win':
+        result_text = "Zwycięstwo!"
+    else:
+        result_text = "Przegrana.\nSzukane słowo to \n'" + word + "'"
+    result_label.config(text=result_text)
+    guess_entry.config(state="disabled")
+    guess_button.config(state="disabled")
+
+
+# funkcja do ograniczenia możliwości wpisywania słów w pole guess_entry (tylko pojedyńcze litery)
+def on_keypress(event):
+    guess_value = guess_entry.get()
+    if len(guess_value) >= 1:
+        guess_entry.delete(0, tk.END)
